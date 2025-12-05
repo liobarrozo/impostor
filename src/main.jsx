@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/client'
 import App from './App.jsx'
 import './index.css'
 
-// 👇 IMPORTA ESTO PARA LA PWA
+import { Analytics } from '@vercel/analytics/react'
 import { registerSW } from 'virtual:pwa-register'
 
 // 👇 EJECUTA EL REGISTRO
