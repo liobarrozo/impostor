@@ -1,12 +1,47 @@
-import React, { useState } from 'react';
-import { Play, Users, Skull, Target, Crosshair, User, Settings, ScanLine, ChevronDown, ChevronUp, Edit3 } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Play, Users, Skull, Target, Crosshair, User, Settings, ScanLine, ChevronDown, Edit3, Download } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { WORD_CATEGORIES } from '../../constants/words';
 
 export default function SetupView({ config, setConfig, playerNames, updatePlayerName, onStart }) {
   const categories = Object.keys(WORD_CATEGORIES);
-  // Estado para controlar si el acordeón de nombres está abierto
+  
+  // Estado para el acordeón de nombres
   const [showNames, setShowNames] = useState(false);
+  
+  // Estado para la PWA (Instalar App)
+  const [deferredPrompt, setDeferredPrompt] = useState(null);
+
+  // Lógica para capturar el evento de instalación (PWA)
+  useEffect(() => {
+    const handler = (e) => {
+      // Prevenir que Chrome muestre el aviso automático (para controlarlo nosotros)
+      e.preventDefault();
+      setDeferredPrompt(e);
+    };
+
+    window.addEventListener('beforeinstallprompt', handler);
+
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handler);
+    };
+  }, []);
+
+  // Manejador del click en "Instalar App"
+  const handleInstallClick = async () => {
+    if (!deferredPrompt) return;
+
+    // Mostrar el prompt nativo
+    deferredPrompt.prompt();
+
+    // Esperar a que el usuario decida
+    const { outcome } = await deferredPrompt.userChoice;
+    
+    // Si aceptó, limpiamos el estado
+    if (outcome === 'accepted') {
+      setDeferredPrompt(null);
+    }
+  };
 
   return (
     <div className="flex flex-col items-center min-h-[90vh] w-full max-w-sm py-4 relative">
@@ -29,8 +64,24 @@ export default function SetupView({ config, setConfig, playerNames, updatePlayer
          <div className="w-full h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent mt-4"></div>
       </div>
 
-      {/* --- SCROLL AREA --- */}
+      {/* --- AREA DE SCROLL --- */}
       <div className="w-full px-4 pb-32 overflow-y-auto scrollbar-hide">
+        
+        {/* BOTÓN DE INSTALAR APP (Solo aparece si es posible instalar) */}
+        {deferredPrompt && (
+          <motion.div 
+            initial={{ opacity: 0, y: -10 }} 
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-4"
+          >
+            <button 
+              onClick={handleInstallClick}
+              className="btn btn-outline btn-sm w-full border-primary/30 text-primary hover:bg-primary hover:text-black gap-2 font-mono uppercase tracking-widest"
+            >
+              <Download size={16} /> Instalar Aplicación
+            </button>
+          </motion.div>
+        )}
         
         {/* BLOQUE 1: PARÁMETROS DE MISIÓN (Siempre visible) */}
         <div className="bg-white/5 border border-white/10 rounded-2xl p-4 backdrop-blur-md mb-4 relative overflow-hidden">
