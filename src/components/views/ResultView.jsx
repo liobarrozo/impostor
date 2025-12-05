@@ -1,7 +1,8 @@
 import React from 'react';
 import { RefreshCw } from 'lucide-react';
 
-export default function ResultView({ word, roles, onReset }) {
+// Agregamos 'playerNames' a las props
+export default function ResultView({ word, roles, playerNames, onReset }) {
   return (
     <div className="card w-full max-w-sm bg-base-100 shadow-xl text-center">
       <div className="card-body">
@@ -20,7 +21,8 @@ export default function ResultView({ word, roles, onReset }) {
           {roles.map((role, idx) => (
             role === 'impostor' && (
               <div key={idx} className="alert alert-error shadow-sm">
-                <span>Jugador {idx + 1}</span>
+                {/* Mostramos el nombre real */}
+                <span className="font-bold">{playerNames[idx]}</span>
               </div>
             )
           ))}

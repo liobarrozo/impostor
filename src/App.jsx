@@ -1,7 +1,5 @@
 import React from 'react';
 import { useImpostorGame } from './hooks/useImpostorGame';
-
-// Vistas
 import SetupView from './components/views/SetupView';
 import RevealView from './components/views/RevealView';
 import PlayingView from './components/views/PlayingView';
@@ -14,12 +12,13 @@ export default function App() {
     config, 
     setConfig, 
     gameData, 
+    playerNames,      // Nuevas props
+    updatePlayerName, // Nuevas props
     startGame, 
     nextPlayer, 
     resetGame 
   } = useImpostorGame();
 
-  // Contenedor principal centrado
   return (
     <div className={`min-h-screen flex items-center justify-center p-4 ${gameState === 'reveal' ? 'bg-neutral' : 'bg-base-200'}`}>
       
@@ -27,14 +26,16 @@ export default function App() {
         <SetupView 
           config={config} 
           setConfig={setConfig} 
+          playerNames={playerNames}         // Pasamos nombres
+          updatePlayerName={updatePlayerName} // Pasamos función de update
           onStart={startGame} 
         />
       )}
 
       {gameState === 'reveal' && (
         <RevealView 
-          // Usamos 'key' para forzar que React reinicie el componente (y su estado interno) cuando cambia el jugador
           key={gameData.currentPlayerIndex}
+          playerName={playerNames[gameData.currentPlayerIndex]} // Pasamos nombre actual
           currentPlayer={gameData.currentPlayerIndex}
           totalPlayers={config.players}
           role={gameData.roles[gameData.currentPlayerIndex]}
@@ -56,6 +57,7 @@ export default function App() {
         <ResultView 
           word={gameData.word}
           roles={gameData.roles}
+          playerNames={playerNames} 
           onReset={resetGame}
         />
       )}
