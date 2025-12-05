@@ -1,4 +1,3 @@
-// src/components/views/VotingView.jsx
 import React, { useState } from 'react';
 import { Skull, ShieldCheck, AlertTriangle, Fingerprint, ChevronRight, Play } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -6,30 +5,57 @@ import { motion, AnimatePresence } from 'framer-motion';
 export default function VotingView({ playerNames, roles, ejectedPlayers, onEject, onContinueGame, onShowResults }) {
   const [selectedPlayerIndex, setSelectedPlayerIndex] = useState(null);
   const [votingStage, setVotingStage] = useState('selection'); // selection | ejecting | revealed
-  const [isGameOver, setIsGameOver] = useState(false); // Estado local para saber si terminó
+  
+  // Estados para controlar el fin del juego y la razón
+  const [isGameOver, setIsGameOver] = useState(false);
+  const [gameOverReason, setGameOverReason] = useState(null); // 'impostors_dead' | 'impostors_domination'
 
   const handleVote = (index) => {
     setSelectedPlayerIndex(index);
     setVotingStage('ejecting');
     
-    // Llamamos a la función del hook para marcarlo como eliminado en la lógica global
+    // 1. Ejecutamos la eliminación en el hook (estado global)
     onEject(index);
 
-    // --- CÁLCULO DE FIN DE JUEGO ---
-    const isTargetImpostor = roles[index] === 'impostor';
+    // --- CÁLCULO DE FIN DE JUEGO (LÓGICA CORREGIDA) ---
     
-    // Contamos cuántos impostores había en total
-    const totalImpostors = roles.filter(r => r === 'impostor').length;
-    
-    // Contamos cuántos impostores YA habían sido eliminados antes de este turno
-    const previouslyEjectedImpostors = ejectedPlayers.filter(idx => roles[idx] === 'impostor').length;
-    
-    // Si el actual es impostor, sumamos 1 a los eliminados
-    const currentEjectedCount = previouslyEjectedImpostors + (isTargetImpostor ? 1 : 0);
+    // Simulamos la lista de eliminados INCLUYENDO al que acabamos de votar
+    // (Nota: ejectedPlayers aún no se actualiza en este render, por eso sumamos el actual manualmente para el cálculo)
+    const allDeadIndexes = [...ejectedPlayers, index];
 
-    // Si hemos atrapado a todos, el juego termina
-    const gameEnded = currentEjectedCount === totalImpostors;
-    setIsGameOver(gameEnded);
+    // Calculamos quiénes quedan vivos
+    let aliveImpostors = 0;
+    let aliveCitizens = 0;
+
+    roles.forEach((role, idx) => {
+      // Si el jugador NO está en la lista de muertos (ni los viejos ni el nuevo)
+      if (!allDeadIndexes.includes(idx)) {
+        if (role === 'impostor') {
+          aliveImpostors++;
+        } else {
+          aliveCitizens++;
+        }
+      }
+    });
+
+    // --- CONDICIONES DE VICTORIA ---
+
+    if (aliveImpostors === 0) {
+      // CASO A: Ganan Ciudadanos (No quedan impostores)
+      setIsGameOver(true);
+      setGameOverReason('impostors_dead');
+    } 
+    else if (aliveImpostors >= aliveCitizens) {
+      // CASO B: Ganan Impostores (Igualaron o superaron a los ciudadanos)
+      // Ejemplo: Quedan 1 Impostor y 1 Ciudadano.
+      setIsGameOver(true);
+      setGameOverReason('impostors_domination');
+    } 
+    else {
+      // El juego continúa
+      setIsGameOver(false);
+      setGameOverReason(null);
+    }
 
     setTimeout(() => {
       setVotingStage('revealed');
@@ -41,7 +67,7 @@ export default function VotingView({ playerNames, roles, ejectedPlayers, onEject
 
   return (
     <div className="flex flex-col items-center min-h-[85vh] w-full max-w-sm py-6 relative overflow-hidden">
-       {/* Fondos (mismo código de antes) */}
+       {/* Fondos */}
       <div className="absolute inset-0 bg-black -z-20"></div>
       <div className={`absolute inset-0 transition-colors duration-1000 -z-10 opacity-20 ${
           votingStage === 'revealed' 
@@ -58,29 +84,26 @@ export default function VotingView({ playerNames, roles, ejectedPlayers, onEject
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, x: -100 }}
             className="w-full px-4 flex flex-col h-full"
           >
-             {/* Header igual... */}
             <div className="text-center mb-6">
                <h2 className="text-2xl font-black text-white uppercase tracking-widest">¿Quién es el traidor?</h2>
             </div>
 
-            <div className="flex-1 overflow-y-auto space-y-3 pb-8">
+            <div className="flex-1 overflow-y-auto space-y-3 pb-8 scrollbar-hide">
               {playerNames.map((name, idx) => {
-                // Verificamos si ya estaba eliminado de rondas anteriores
                 const isDead = ejectedPlayers.includes(idx);
-                
                 return (
                   <button
                     key={idx}
-                    disabled={isDead} // Deshabilitar si ya está muerto
+                    disabled={isDead}
                     onClick={() => handleVote(idx)}
                     className={`w-full p-4 rounded-xl border flex items-center justify-between group transition-all
                       ${isDead 
-                        ? 'border-transparent bg-neutral-900 opacity-40 cursor-not-allowed grayscale' 
+                        ? 'border-transparent bg-neutral-900 opacity-30 cursor-not-allowed grayscale' 
                         : 'border-white/10 bg-white/5 hover:bg-white/10 hover:border-primary/50'
                       }`}
                   >
                     <div className="flex items-center gap-3">
-                      <div className={`w-8 h-8 rounded-full flex items-center justify-center font-mono text-xs border border-white/10 ${isDead ? 'bg-neutral-800' : 'bg-neutral-800'}`}>
+                      <div className={`w-8 h-8 rounded-full flex items-center justify-center font-mono text-xs border border-white/10 bg-neutral-800`}>
                         {idx + 1}
                       </div>
                       <span className="font-bold text-white tracking-wide text-lg">
@@ -95,10 +118,9 @@ export default function VotingView({ playerNames, roles, ejectedPlayers, onEject
           </motion.div>
         )}
 
-        {/* --- FASE 2: ANIMACIÓN (Igual que antes) --- */}
+        {/* --- FASE 2: ANIMACIÓN --- */}
         {votingStage === 'ejecting' && (
            <motion.div key="ejecting" className="flex flex-col items-center justify-center h-[60vh] text-center">
-             {/* ... Spinner y textos de verificación de ADN ... */}
              <div className="relative w-32 h-32 mb-8">
                <div className="absolute inset-0 border-4 border-t-primary border-r-transparent border-b-primary border-l-transparent rounded-full animate-spin"></div>
                <Fingerprint size={48} className="text-white/50 animate-pulse absolute top-10 left-10" />
@@ -107,14 +129,13 @@ export default function VotingView({ playerNames, roles, ejectedPlayers, onEject
            </motion.div>
         )}
 
-        {/* --- FASE 3: REVELACIÓN Y BOTONES --- */}
+        {/* --- FASE 3: REVELACIÓN --- */}
         {votingStage === 'revealed' && (
           <motion.div 
             key="revealed"
             initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }}
             className="flex flex-col items-center justify-center h-full text-center w-full px-4"
           >
-            {/* Mensajes de Resultado (Impostor vs Inocente) - Mismo código visual */}
             {isSelectedImpostor ? (
               <div className="flex flex-col items-center space-y-6 mb-8">
                  <Skull size={100} className="text-red-500 drop-shadow-[0_0_20px_rgba(239,68,68,0.8)]" />
@@ -133,10 +154,10 @@ export default function VotingView({ playerNames, roles, ejectedPlayers, onEject
               </div>
             )}
 
-            {/* --- AQUÍ ESTÁN LOS BOTONES --- */}
+            {/* --- BOTONES DE ACCIÓN --- */}
             <div className="w-full space-y-3 mt-4">
               
-              {/* Opción 1: Continuar Juego (Solo si NO ha terminado el juego) */}
+              {/* Solo permitimos continuar si NO es Game Over */}
               {!isGameOver && (
                 <button 
                   className="btn btn-success btn-block btn-lg shadow-[0_0_15px_rgba(34,197,94,0.4)] border-none text-black font-black tracking-wider hover:scale-[1.02] transition-transform"
@@ -146,25 +167,42 @@ export default function VotingView({ playerNames, roles, ejectedPlayers, onEject
                 </button>
               )}
 
-              {/* Opción 2: Ver Resultados (Siempre visible, pero cambia estilo si es la única opción) */}
               <button 
                 className={`btn btn-block ${isGameOver ? 'btn-primary btn-lg' : 'btn-outline border-white/30 text-white hover:bg-white/10'}`}
                 onClick={onShowResults}
               >
-                {isGameOver ? 'Ver Informe Final' : 'Terminar Partida'} <ChevronRight />
+                {isGameOver ? 'Ver Informe Final' : 'Rendirse / Terminar'} <ChevronRight />
               </button>
               
             </div>
 
-            {/* Mensaje de estado del juego */}
+            {/* MENSAJES DE ESTADO DINÁMICOS */}
+            
+            {/* 1. Juego continúa */}
             {!isGameOver && isSelectedImpostor && (
-               <p className="mt-4 text-xs text-green-500 font-mono">¡Aún quedan impostores sueltos!</p>
+               <p className="mt-4 text-xs text-green-500 font-mono">¡Buen trabajo! Pero aún hay infiltrados.</p>
             )}
             {!isGameOver && !isSelectedImpostor && (
-               <p className="mt-4 text-xs text-red-400 font-mono">Los impostores siguen entre nosotros...</p>
+               <p className="mt-4 text-xs text-red-400 font-mono">Cuidado. Los impostores siguen operando.</p>
             )}
-            {isGameOver && (
-               <p className="mt-4 text-xs text-primary font-bold font-mono animate-pulse">TODAS LAS AMENAZAS ELIMINADAS</p>
+
+            {/* 2. Juego Terminado: Ganan Ciudadanos */}
+            {isGameOver && gameOverReason === 'impostors_dead' && (
+               <p className="mt-4 text-xs text-primary font-bold font-mono animate-pulse">
+                 AMENAZA NEUTRALIZADA. INOCENTES GANAN.
+               </p>
+            )}
+
+            {/* 3. Juego Terminado: Ganan Impostores (Dominación) */}
+            {isGameOver && gameOverReason === 'impostors_domination' && (
+               <div className="mt-4 space-y-1">
+                 <p className="text-xs text-red-500 font-bold font-mono animate-pulse">
+                   CRÍTICO: POBLACIÓN COMPROMETIDA.
+                 </p>
+                 <p className="text-[10px] text-red-400/60 font-mono">
+                   Los impostores han tomado el control.
+                 </p>
+               </div>
             )}
 
           </motion.div>
