@@ -1,8 +1,12 @@
+// src/App.jsx
 import React from 'react';
 import { useImpostorGame } from './hooks/useImpostorGame';
+
+// Vistas
 import SetupView from './components/views/SetupView';
 import RevealView from './components/views/RevealView';
 import PlayingView from './components/views/PlayingView';
+import VotingView from './components/views/VotingView'; // 👈 Importar
 import ResultView from './components/views/ResultView';
 
 export default function App() {
@@ -12,22 +16,26 @@ export default function App() {
     config, 
     setConfig, 
     gameData, 
-    playerNames,      // Nuevas props
-    updatePlayerName, // Nuevas props
+    playerNames,
+    updatePlayerName,
     startGame, 
     nextPlayer, 
-    resetGame 
+    startVoting, // 👈 Usar la nueva función
+    resetGame,
+    ejectedPlayers, // 👈 Traemos esto
+    ejectPlayer,    // 👈 Traemos esto
+    continuePlaying // 👈 Traemos esto
   } = useImpostorGame();
 
   return (
-    <div className={`min-h-screen flex items-center justify-center p-4 ${gameState === 'reveal' ? 'bg-neutral' : 'bg-base-200'}`}>
+    <div className={`min-h-screen flex items-center justify-center p-4 bg-black`}> {/* Forzar fondo negro para estética */}
       
       {gameState === 'setup' && (
         <SetupView 
           config={config} 
           setConfig={setConfig} 
-          playerNames={playerNames}         // Pasamos nombres
-          updatePlayerName={updatePlayerName} // Pasamos función de update
+          playerNames={playerNames}
+          updatePlayerName={updatePlayerName}
           onStart={startGame} 
         />
       )}
@@ -35,7 +43,7 @@ export default function App() {
       {gameState === 'reveal' && (
         <RevealView 
           key={gameData.currentPlayerIndex}
-          playerName={playerNames[gameData.currentPlayerIndex]} // Pasamos nombre actual
+          playerName={gameData.activeNames[gameData.currentPlayerIndex]}
           currentPlayer={gameData.currentPlayerIndex}
           totalPlayers={config.players}
           role={gameData.roles[gameData.currentPlayerIndex]}
@@ -49,7 +57,19 @@ export default function App() {
         <PlayingView 
           timer={gameData.timer}
           category={config.category}
-          onFinish={() => setGameState('result')}
+          onFinish={startVoting} // 👈 Ahora llamamos a VOTACIÓN, no a resultados directos
+        />
+      )}
+
+      {/* NUEVA VISTA DE VOTACIÓN */}
+      {gameState === 'voting' && (
+        <VotingView 
+          playerNames={gameData.activeNames}
+          roles={gameData.roles}
+          ejectedPlayers={ejectedPlayers} // 👈 Pasamos lista de muertos
+          onEject={ejectPlayer}           // 👈 Función para matar
+          onContinueGame={continuePlaying} // 👈 Función para revivir el juego
+          onShowResults={() => setGameState('result')} // Al terminar de votar, vamos al resultado global
         />
       )}
 
@@ -57,7 +77,7 @@ export default function App() {
         <ResultView 
           word={gameData.word}
           roles={gameData.roles}
-          playerNames={playerNames} 
+          playerNames={gameData.activeNames}
           onReset={resetGame}
         />
       )}
