@@ -121,7 +121,7 @@ export default function SetupView({ config, setConfig, playerNames, updatePlayer
                    <span className="text-primary font-bold font-mono text-sm">{config.players}</span>
                  </div>
                  <input 
-                   type="range" min="3" max="12" value={config.players} 
+                   type="range" min="3" max="20" value={config.players} 
                    className="range range-xs range-primary" 
                    onChange={(e) => setConfig({...config, players: parseInt(e.target.value)})} 
                  />
