@@ -5,7 +5,7 @@ import CircularTimer from '../components/playing/CircularTimer';
 
 export default function PlayingPage({ timer, category, onFinish, onExit }) {
   return (
-    <Screen className="justify-between min-h-[85vh] py-6 overflow-hidden">
+    <Screen className="justify-between py-6 overflow-hidden">
 
       {/* 1. STATUS HEADER */}
       <div className="w-full px-4 flex justify-between items-center text-xs font-mono tracking-widest text-white/50 mb-4">

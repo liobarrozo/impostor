@@ -1,2 +1,5 @@
 @import "tailwindcss";
 @plugin "daisyui";
+
+/* App fija a pantalla: nada de rubber-band ni pull-to-refresh en iOS. */
+html, body { overscroll-behavior: none; }

@@ -35,7 +35,7 @@ export default function VotingPage({ playerNames, roles, ejectedPlayers, onEject
 
   return (
     <Screen
-      className="min-h-[85vh] py-6 overflow-hidden"
+      className="py-6 overflow-hidden"
       tint={votingStage === 'revealed'
         ? (isSelectedImpostor ? 'bg-red-900 opacity-20' : 'bg-emerald-900 opacity-20')
         : ''}

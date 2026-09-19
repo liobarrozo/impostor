@@ -6,7 +6,7 @@ import PlayerRoster from '../components/setup/PlayerRoster';
 
 export default function SetupPage({ config, setConfig, playerNames, updatePlayerName, onStart }) {
   return (
-    <Screen className="min-h-[90vh] py-4">
+    <Screen className="py-4">
 
       {/* --- LOGO COMPACTO --- */}
       <div className="flex flex-col items-center mb-6 relative z-10 w-full shrink-0">
@@ -22,7 +22,7 @@ export default function SetupPage({ config, setConfig, playerNames, updatePlayer
       </div>
 
       {/* --- AREA DE SCROLL --- */}
-      <div className="w-full px-4 pb-32 overflow-y-auto scrollbar-hide">
+      <div className="w-full flex-1 min-h-0 px-4 pb-32 overflow-y-auto scrollbar-hide">
         <InstallAppButton />
         <MissionParams config={config} setConfig={setConfig} />
         <PlayerRoster

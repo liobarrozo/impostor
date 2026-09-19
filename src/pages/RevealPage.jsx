@@ -8,7 +8,7 @@ export default function RevealPage({ playerName, currentPlayer, totalPlayers, ro
   const [hasSeenRole, setHasSeenRole] = useState(false);
 
   return (
-    <Screen className="justify-between min-h-[85vh] py-6 overflow-x-hidden">
+    <Screen className="justify-between py-6 overflow-x-hidden">
 
       {/* 1. CABECERA */}
       <div className="text-center mb-6 select-none relative z-10">

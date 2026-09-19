@@ -57,12 +57,12 @@ export default function App() {
 
   return (
     // Contenedor Principal: Fondo negro y centrado para móviles
-    <div className="min-h-screen bg-black text-neutral-content flex items-center justify-center font-sans overflow-hidden">
+    <div className="h-dvh bg-black text-neutral-content flex items-center justify-center font-sans overflow-hidden">
 
       {/* Contenedor ancho fijo para simular app móvil en escritorio
         y ocupar todo en celular
       */}
-      <div className="w-full max-w-md min-h-screen relative">
+      <div className="w-full max-w-md h-full relative">
 
         {/* Modal de Confirmación de Salida */}
         <ExitConfirmModal

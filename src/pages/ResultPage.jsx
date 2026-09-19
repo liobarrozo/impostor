@@ -21,7 +21,7 @@ export default function ResultPage({ word, roles, playerNames, ejectedPlayers, o
 
   return (
     <Screen
-      className="justify-center min-h-[85vh] py-6 overflow-hidden"
+      className="justify-center py-6 overflow-hidden"
       tint={stage === 'revealed'
         ? (impostorsWon ? 'bg-red-900 opacity-40' : 'bg-emerald-900 opacity-40')
         : ''}
