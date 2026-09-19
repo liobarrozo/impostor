@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import { User, ChevronDown, Edit3 } from 'lucide-react';
+import { User, ChevronDown, Edit3, UserPlus } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 // Acordeón de nombres. Abierto/cerrado es asunto suyo, no de la página.
-export default function PlayerRoster({ playerCount, playerNames, updatePlayerName }) {
+export default function PlayerRoster({ playerCount, playerNames, updatePlayerName, onAddPlayer, maxPlayers = 25 }) {
   const [showNames, setShowNames] = useState(false);
 
   return (
@@ -50,7 +50,7 @@ export default function PlayerRoster({ playerCount, playerNames, updatePlayerNam
                       <input
                         type="text"
                         className="input input-sm w-full bg-black border border-white/10 text-white font-bold placeholder-white/20 focus:border-primary focus:bg-primary/5 transition-all pl-8 rounded-md h-9 text-xs"
-                        value={playerNames[index]}
+                        value={playerNames[index] || ''}
                         onChange={(e) => updatePlayerName(index, e.target.value)}
                         placeholder={`Agente ${index + 1}`}
                       />
@@ -60,6 +60,15 @@ export default function PlayerRoster({ playerCount, playerNames, updatePlayerNam
                    </div>
                  </div>
                ))}
+
+               {playerCount < maxPlayers && (
+                 <button
+                   onClick={onAddPlayer}
+                   className="w-full flex items-center justify-center gap-2 h-9 rounded-md border border-dashed border-white/20 text-white/40 hover:border-primary hover:text-primary hover:bg-primary/5 transition-all text-[11px] font-mono uppercase tracking-wide"
+                 >
+                   <UserPlus size={12} /> Agregar Agente
+                 </button>
+               )}
              </div>
            </motion.div>
          )}

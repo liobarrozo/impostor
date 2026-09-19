@@ -10,7 +10,7 @@ export default function SetupPage({ config, setConfig, playerNames, updatePlayer
 
       {/* --- LOGO COMPACTO --- */}
       <div className="flex flex-col items-center mb-6 relative z-10 w-full shrink-0">
-         <div className="text-[10px] text-primary/40 font-mono mb-1 tracking-[0.5em] flex items-center gap-2">
+         <div className="text-[12px] text-primary/40 font-mono mb-1 tracking-[0.5em] flex items-center gap-2">
             <ScanLine size={10} /> SECURE LINK
          </div>
          <div className="relative">
@@ -29,6 +29,7 @@ export default function SetupPage({ config, setConfig, playerNames, updatePlayer
           playerCount={config.players}
           playerNames={playerNames}
           updatePlayerName={updatePlayerName}
+          onAddPlayer={() => setConfig({ ...config, players: config.players + 1 })}
         />
       </div>
 

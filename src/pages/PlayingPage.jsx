@@ -37,7 +37,7 @@ export default function PlayingPage({ timer, category, onFinish, onExit }) {
           <div className="absolute inset-0 bg-error/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
           <span className="flex items-center gap-2 relative z-10 font-black tracking-widest">
             <AlertTriangle size={24} />
-            EMERGENCY MEETING
+            IR A VOTAR
           </span>
         </button>
 
