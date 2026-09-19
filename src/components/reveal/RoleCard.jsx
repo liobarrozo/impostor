@@ -2,6 +2,13 @@ import { useState } from 'react';
 import { UserRound, Skull, ShieldCheck } from 'lucide-react';
 import { motion } from 'framer-motion';
 
+// Safari iOS necesita el prefijo -webkit-, y que las caras no queden
+// coplanares: si comparten el mismo plano Z muestra las dos a la vez.
+const face = {
+  backfaceVisibility: 'hidden',
+  WebkitBackfaceVisibility: 'hidden',
+};
+
 const springAnim = {
   type: "spring",
   stiffness: 260,
@@ -13,7 +20,7 @@ function CardCover() {
   return (
     <div
       className="absolute w-full h-full rounded-3xl overflow-hidden border-[1px] border-white/10 bg-neutral-900 shadow-2xl flex flex-col items-center justify-center p-6 text-white"
-      style={{ backfaceVisibility: 'hidden' }}
+      style={{ ...face, transform: 'translateZ(1px)', WebkitTransform: 'translateZ(1px)' }}
     >
       {/* Fondo decorativo */}
       <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-20"></div>
@@ -122,10 +129,10 @@ export default function RoleCard({ role, word, category, onReveal }) {
   };
 
   return (
-    <div className="relative w-72 h-[420px] perspective-1000">
+    <div className="relative w-72 h-[420px] [perspective:1000px]">
       <motion.div
         className="w-full h-full relative cursor-grab active:cursor-grabbing"
-        style={{ transformStyle: "preserve-3d" }}
+        style={{ transformStyle: 'preserve-3d', WebkitTransformStyle: 'preserve-3d' }}
         animate={{ rotateY: isFlipped ? 180 : 0 }}
         transition={springAnim}
         drag="x"
@@ -141,7 +148,7 @@ export default function RoleCard({ role, word, category, onReveal }) {
           className={`absolute w-full h-full rounded-3xl overflow-hidden border-[1px] shadow-2xl flex flex-col items-center justify-center p-6 text-center
             ${isImpostor ? 'bg-red-950 border-red-500/30' : 'bg-slate-900 border-emerald-500/30'}
           `}
-          style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}
+          style={{ ...face, transform: 'rotateY(180deg)', WebkitTransform: 'rotateY(180deg)' }}
         >
           {/* Gradiente de fondo dramático */}
           <div className={`absolute inset-0 bg-gradient-to-b ${isImpostor ? 'from-red-900/50 via-black to-black' : 'from-emerald-900/50 via-black to-black'} opacity-80`}></div>
