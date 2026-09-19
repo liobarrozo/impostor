@@ -3,9 +3,8 @@ export const WORD_CATEGORIES = {
     "Lugares": ["Hospital", "Escuela", "Playa", "Aeropuerto", "Cine", "Supermercado", "Iglesia", "Casino", "Municipalidad" ],
     "Comida": ["Pizza", "Sushi", "Hamburguesa", "Helado", "Tacos", "Ensalada", "Paella", "Asado", "Fideos"],
     "Objetos": ["Computadora", "Silla", "Reloj", "Guitarra", "Lámpara", "Bicicleta", "Auto", "Billetera", "Auriculares", "Microondas" ],
-    "Profesiones": ["Médico", "Bombero", "Maestro", "Policía", "Astronauta", "Chef", "Programador", "Arquitecto"],
-    "Famosos Arg": ["Ricardo Fort", "Messi", "Mirtha Legrand", "Charly García", "Cerati", "Papa Francisco", "Francella", "San Martín", "Eva Perón", "Perón", "CFK", "Milei"],
+    "Profesiones": ["Médico", "Bombero", "Profesor", "Policía", "Astronauta", "Chef", "Programador", "Arquitecto", "Abogado"],
+    "Famosos Arg": ["Ricardo Fort", "Messi", "Mirtha Legrand", "Charly García", "Gustavo Cerati", "Papa Francisco", "Francella", "San Martín", "Eva Perón", "Perón", "CFK", "Milei", "Maradona", "Emi Mernes"],
     "Eclesial": ["Biblia", "Eucaristía", "Jesús", "Altar", "Cruz", "Bautismo", "Sacerdote", "Oración", "Cáliz", "Vino", "Papa", "Monaguillo", "Santo", "Carlo Acutis" ],
-    "*Eclesial VN*": ["Biblia", "Eucaristía", "Jesús", "Altar", "Cruz", "Bautismo", "Sacerdote", "Oración", "Cáliz", "Vino", "Papa", "Monaguillo", "Santo", "Carlo Acutis", "Gabi Secretaria", "M. Parma", "Mati Leyton", "Lili Caritas" ]
-
+    "*Eclesial VN*": ["Biblia", "Eucaristía", "Jesús", "Altar", "Cruz", "Bautismo", "Sacerdote", "Oración", "Cáliz", "Vino", "Papa", "Monaguillo", "Santo", "Carlo Acutis", "Gabi Secretaria", "M. Parma", "Mati Leyton", "Fede Diácono"]
   };

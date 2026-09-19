@@ -1,16 +1,54 @@
-# React + Vite
+# Infiltrado
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Juego de fiesta local (tipo "impostor") para jugar pasando un solo celular. Todos ven una palabra secreta menos los infiltrados, que tienen que disimular.
 
-Currently, two official plugins are available:
+PWA instalable, en español, pensada para pantalla de móvil.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Cómo jugar
 
-## React Compiler
+1. **Setup** — elegís cantidad de jugadores, cuántos infiltrados y la categoría. Los nombres quedan guardados en `localStorage`.
+2. **Reveal** — el celular pasa de mano en mano: cada jugador ve su rol y la palabra (o que es infiltrado).
+3. **Playing** — temporizador de 5 min mientras se habla. Botón de reunión de emergencia para cortar antes.
+4. **Voting** — se expulsa a un jugador por ronda. Si quedan infiltrados vivos, se vuelve a jugar.
+5. **Result** — se muestra la palabra, los roles y quién ganó.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Gana la tripulación si expulsa a todos los infiltrados; ganan los infiltrados si igualan o superan en número a los vivos.
 
-## Expanding the ESLint configuration
+## Stack
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+React 19 · Vite 7 · Tailwind 4 + daisyUI · framer-motion · lucide-react · vite-plugin-pwa · Vercel Analytics
+
+## Comandos
+
+```bash
+npm install
+npm run dev      # servidor de desarrollo
+npm run build    # build de producción
+npm run preview  # previsualizar el build
+npm run lint     # eslint
+```
+
+## Estructura
+
+```
+src/
+├── App.jsx                     # router por gameState (setup/reveal/playing/voting/result)
+├── main.jsx
+├── index.css
+├── hooks/
+│   └── useImpostorGame.js      # toda la lógica: roles, palabra, timer, expulsiones
+├── components/
+│   ├── ExitConfirmModal.jsx
+│   └── views/                  # SetupView, RevealView, PlayingView, VotingView, ResultView
+├── constants/
+│   └── words.js                # WORD_CATEGORIES
+└── utils/
+    ├── gameStatus.js           # única fuente de verdad de quién gana
+    └── gameStatus.check.mjs    # self-check: node src/utils/gameStatus.check.mjs
+```
+
+## Detalles
+
+- **Sin repetidos**: las últimas 3 palabras usadas se guardan en `localStorage` y se excluyen del sorteo.
+- **Salida protegida**: con la partida en curso hay modal de confirmación y `beforeunload`.
+- Agregar categorías = agregar una clave más en `src/constants/words.js`.
